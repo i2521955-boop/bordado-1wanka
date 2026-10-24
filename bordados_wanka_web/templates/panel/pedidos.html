@@ -1,0 +1,10 @@
+{% extends "panel/base_panel.html" %}{% block titulo %}Pedidos{% endblock %}
+{% block contenido %}
+<div class="flex flex-wrap items-end gap-4"><h1 class="font-serif text-3xl">Pedidos</h1>
+  <form class="ml-auto"><select name="estado" onchange="this.form.submit()" class="rounded-lg border border-stone-300 px-3 py-2 text-sm"><option value="">Todos los estados</option>{% for e in estados %}<option value="{{ e.codigo }}" {% if e.codigo == estado %}selected{% endif %}>{{ e.nombre }}</option>{% endfor %}</select></form></div>
+<div class="mt-6 bg-white rounded-xl border border-stone-200 overflow-x-auto">
+  <table class="w-full text-sm"><thead class="bg-stone-50 text-left text-stone-500"><tr><th class="p-3">Número</th><th class="p-3">Cliente</th><th class="p-3">Entrega</th><th class="p-3">Estado</th><th class="p-3">Pago</th><th class="p-3 text-right">Total</th><th class="p-3 text-right">Saldo</th><th class="p-3">Fecha</th></tr></thead>
+  <tbody class="divide-y">{% for p in pedidos %}<tr class="hover:bg-wanka-50/40"><td class="p-3"><a href="/panel/pedidos/{{ p.id_pedido }}/" class="font-semibold text-wanka-700">{{ p.numero }}</a></td><td class="p-3">{{ p.cliente }}</td><td class="p-3">{{ p.tipo_entrega }}</td><td class="p-3">{% include "parciales/estado.html" with grupo=p.estado_grupo nombre=p.estado_nombre %}</td><td class="p-3">{{ p.estado_pago }}</td><td class="p-3 text-right">S/ {{ p.total|floatformat:2 }}</td><td class="p-3 text-right">S/ {{ p.saldo|floatformat:2 }}</td><td class="p-3 text-stone-500">{{ p.creado_lima|date:"d/m H:i" }}</td></tr>
+  {% empty %}<tr><td colspan="8" class="p-6 text-center text-stone-500">No hay pedidos.</td></tr>{% endfor %}</tbody></table>
+</div>
+{% endblock %}

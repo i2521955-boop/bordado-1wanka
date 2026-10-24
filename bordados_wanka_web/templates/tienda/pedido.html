@@ -1,0 +1,43 @@
+{% extends "base.html" %}{% block titulo %}Pedido {{ p.numero }}{% endblock %}
+{% block contenido %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+  <a href="/mis-pedidos/" class="text-sm text-wanka-600">← Mis pedidos</a>
+  <div class="flex flex-wrap items-center gap-4 mt-2"><h1 class="font-serif text-4xl">Pedido {{ p.numero }}</h1>{% include "parciales/estado.html" with grupo=p.estado_grupo nombre=p.estado_nombre %}</div>
+  <div class="mt-6 grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+      <section class="bg-white rounded-xl border border-stone-200 p-5">
+        <h2 class="font-serif text-xl">Productos</h2>
+        <ul class="mt-3 divide-y text-sm">{% for i in items %}<li class="py-2 flex justify-between"><span>{{ i.cantidad }} × {{ i.nombre_producto }} <span class="text-stone-500">{{ i.talla|default:"" }} {{ i.color|default:"" }}</span></span><span>S/ {{ i.subtotal|floatformat:2 }}</span></li>{% endfor %}</ul>
+        <div class="mt-3 text-sm space-y-1 border-t pt-3">
+          <p class="flex justify-between"><span>Envío</span><span>S/ {{ p.costo_envio|floatformat:2 }}</span></p>
+          <p class="flex justify-between text-lg"><span>Total</span><b>S/ {{ p.total|floatformat:2 }}</b></p>
+          <p class="flex justify-between"><span>Pagado</span><span>S/ {{ p.monto_neto_pagado|floatformat:2 }}</span></p>
+          <p class="flex justify-between font-bold text-wanka-700"><span>Saldo</span><span>S/ {{ p.saldo|floatformat:2 }}</span></p>
+        </div>
+      </section>
+      <section class="bg-white rounded-xl border border-stone-200 p-5">
+        <h2 class="font-serif text-xl">Seguimiento</h2>
+        <ol class="mt-3 space-y-3 border-l-2 border-wanka-100 pl-4 text-sm">{% for h in historial %}<li><b>{{ h.estado_nuevo|capfirst }}</b> <span class="text-stone-500">· {{ h.fecha_lima|date:"d/m/Y H:i" }}</span>{% if h.comentario %}<br><span class="text-stone-500">{{ h.comentario }}</span>{% endif %}</li>{% endfor %}</ol>
+      </section>
+    </div>
+    <aside class="space-y-6">
+      {% if puede_pagar %}
+      <section class="bg-white rounded-xl border-2 border-wanka-600 p-5">
+        <h2 class="font-serif text-xl">Registrar pago</h2>
+        <p class="text-sm text-stone-500 mt-1">Paga S/ <b>{% if p.monto_neto_pagado %}{{ p.saldo|floatformat:2 }}{% else %}{{ p.monto_requerido|floatformat:2 }}{% endif %}</b> por Yape/Plin al <b>964 000 000</b> o por transferencia, y escribe el número de operación.</p>
+        <form method="post" class="mt-4 space-y-3">{% csrf_token %}
+          <select name="metodo" class="w-full rounded-lg border border-stone-300 px-3 py-2">{% for c, n in metodos %}<option value="{{ c }}">{{ n }}</option>{% endfor %}</select>
+          <input name="operacion" required placeholder="N.º de operación" class="w-full rounded-lg border border-stone-300 px-3 py-2">
+          <button class="w-full py-3 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-bold">Enviar pago</button>
+        </form>
+      </section>{% endif %}
+      <section class="bg-white rounded-xl border border-stone-200 p-5">
+        <h2 class="font-serif text-xl">Pagos</h2>
+        <ul class="mt-3 space-y-2 text-sm">{% for g in pagos %}<li class="flex justify-between gap-2"><span>{{ g.metodo|capfirst }} · {{ g.referencia_externa|default:"" }}</span><span>S/ {{ g.monto|floatformat:2 }} · <b>{{ g.estado }}</b></span></li>
+          {% if g.motivo_rechazo %}<li class="text-xs text-red-700">Rechazado: {{ g.motivo_rechazo }}</li>{% endif %}{% empty %}<li class="text-stone-500">Aún no hay pagos.</li>{% endfor %}</ul>
+      </section>
+      {% if p.estado == 'pendiente_pago' %}<form method="post" onsubmit="return confirm('¿Cancelar el pedido?')">{% csrf_token %}<input type="hidden" name="accion" value="cancelar"><button class="w-full py-2 text-sm text-stone-500 hover:text-red-600">Cancelar pedido</button></form>{% endif %}
+    </aside>
+  </div>
+</div>
+{% endblock %}

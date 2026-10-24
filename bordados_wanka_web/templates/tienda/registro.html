@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block titulo %}Crear cuenta{% endblock %}
+{% block contenido %}{% include "tienda/_form_auth.html" %}
+    <h1 class="font-serif text-3xl text-center mt-6">Crea tu cuenta</h1>
+    <form method="post" class="mt-6 space-y-4">{% csrf_token %}
+      <div class="grid grid-cols-2 gap-3">
+        <label class="block"><span class="text-sm font-semibold">Nombres</span><input name="nombres" value="{{ f.nombres }}" required class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2.5"></label>
+        <label class="block"><span class="text-sm font-semibold">Apellidos</span><input name="apellidos" value="{{ f.apellidos }}" required class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2.5"></label>
+      </div>
+      <label class="block"><span class="text-sm font-semibold">Correo</span><input type="email" name="correo" value="{{ f.correo }}" required class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2.5"></label>
+      <label class="block"><span class="text-sm font-semibold">Celular (opcional)</span><input name="celular" value="{{ f.celular }}" class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2.5"></label>
+      <div class="grid grid-cols-2 gap-3">
+        <label class="block"><span class="text-sm font-semibold">Contraseña</span><input type="password" name="clave" minlength="8" required class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2.5"></label>
+        <label class="block"><span class="text-sm font-semibold">Repetir</span><input type="password" name="clave2" minlength="8" required class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2.5"></label>
+      </div>
+      <label class="flex gap-2 text-sm"><input type="checkbox" name="acepto" required class="mt-1"> Acepto la política de privacidad y el tratamiento de mis datos (Ley 29733).</label>
+      <label class="flex gap-2 text-sm text-stone-500"><input type="checkbox" name="publicidad" class="mt-1"> Quiero recibir novedades y promociones.</label>
+      <button class="w-full py-3 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-semibold">Crear cuenta</button>
+      <p class="text-center text-sm text-stone-500">¿Ya tienes cuenta? <a href="/ingresar/" class="text-wanka-600 font-semibold">Ingresa</a></p>
+    </form>
+  </div></div>
+{% endblock %}

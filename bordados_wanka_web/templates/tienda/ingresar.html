@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block titulo %}Ingresar{% endblock %}
+{% block contenido %}{% include "tienda/_form_auth.html" %}
+    <h1 class="font-serif text-3xl text-center mt-6">Bienvenido de vuelta</h1>
+    <p class="text-center text-stone-500 mt-1">Ingresa para explorar nuestros bordados</p>
+    <form method="post" class="mt-8 space-y-5">{% csrf_token %}<input type="hidden" name="siguiente" value="{{ siguiente }}">
+      <label class="block"><span class="text-sm font-semibold">Correo electrónico</span><input type="email" name="correo" value="{{ correo }}" required placeholder="maria@gmail.com" class="mt-2 w-full rounded-lg border border-stone-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-wanka-500"></label>
+      <label class="block"><span class="text-sm font-semibold">Contraseña</span><input type="password" name="clave" required class="mt-2 w-full rounded-lg border border-stone-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-wanka-500"></label>
+      <button class="w-full py-3 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-semibold">Ingresar</button>
+    </form>
+    <div class="flex items-center gap-3 my-6 text-stone-400 text-sm"><span class="flex-1 h-px bg-stone-200"></span>o<span class="flex-1 h-px bg-stone-200"></span></div>
+    <a href="/registro/" class="block text-center w-full py-3 rounded-lg border-2 border-wanka-600 text-wanka-600 font-semibold hover:bg-wanka-50">Crear cuenta nueva</a>
+  </div></div>
+{% endblock %}

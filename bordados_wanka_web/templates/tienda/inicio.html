@@ -1,0 +1,54 @@
+{% extends "base.html" %}{% load static %}
+{% block contenido %}
+<section class="relative overflow-hidden bg-wanka-700" id="hero">
+  <div class="max-w-7xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+    <div class="text-white">
+      <div id="slides" class="relative min-h-[11rem]">
+        <div class="slide" data-img="pollera"><p class="uppercase tracking-[.3em] text-oro text-sm font-bold">Pollera Andina</p><h1 class="font-serif text-4xl md:text-6xl mt-3">La elegancia de nuestra tierra</h1></div>
+        <div class="slide hidden" data-img="faja"><p class="uppercase tracking-[.3em] text-oro text-sm font-bold">Faja Tradicional</p><h1 class="font-serif text-4xl md:text-6xl mt-3">Colores que representan tradición</h1></div>
+        <div class="slide hidden" data-img="chaleco"><p class="uppercase tracking-[.3em] text-oro text-sm font-bold">Chaleco Folklórico</p><h1 class="font-serif text-4xl md:text-6xl mt-3">Diseños únicos para cada ocasión</h1></div>
+        <div class="slide hidden" data-img="artesania"><p class="uppercase tracking-[.3em] text-oro text-sm font-bold">Artesanía</p><h1 class="font-serif text-4xl md:text-6xl mt-3">Artesanía que cuenta historia</h1></div>
+      </div>
+      <p class="mt-4 text-wanka-100 max-w-md">Bordados hechos a mano en Huancayo. Compra por unidad o al por mayor para tu comparsa.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/catalogo/" class="px-6 py-3 rounded-lg bg-white text-wanka-700 font-bold hover:bg-wanka-50">Ver catálogo</a>
+        <a href="/catalogo/polleras/" class="px-6 py-3 rounded-lg border border-white/60 text-white font-semibold hover:bg-white/10">Polleras</a>
+      </div>
+      <div class="mt-8 flex gap-2" id="puntos">{% for i in "0123" %}<button class="w-8 h-1.5 rounded-full bg-white/40" data-i="{{ forloop.counter0 }}" aria-label="Diapositiva {{ forloop.counter }}"></button>{% endfor %}</div>
+    </div>
+    <div class="relative"><div class="absolute -inset-6 rounded-[2rem] bg-oro/20 rotate-3"></div>
+      <img id="hero-img" src="{% static 'img/pollera.svg' %}" alt="" class="relative rounded-[2rem] shadow-2xl w-full aspect-square object-cover transition-opacity duration-500">
+    </div>
+  </div>
+</section>
+<script>
+(() => { const s=[...document.querySelectorAll('.slide')], p=[...document.querySelectorAll('#puntos button')], img=document.getElementById('hero-img'); let i=0;
+  const ir=n=>{ i=n%s.length; s.forEach((e,k)=>e.classList.toggle('hidden',k!==i)); p.forEach((e,k)=>e.classList.toggle('bg-white',k===i));
+    img.style.opacity=0; setTimeout(()=>{img.src='{% static "img/" %}'+s[i].dataset.img+'.svg'; img.style.opacity=1},200); };
+  p.forEach((b,k)=>b.onclick=()=>ir(k)); ir(0); setInterval(()=>ir(i+1),5000); })();
+</script>
+
+<section class="max-w-7xl mx-auto px-4 mt-14">
+  <h2 class="font-serif text-3xl text-center">Nuestras colecciones</h2>
+  <div class="grid sm:grid-cols-3 gap-5 mt-8">
+    {% for slug, nombre in categorias %}
+    <a href="/catalogo/{{ slug }}/" class="tarjeta relative rounded-2xl overflow-hidden aspect-[4/3] group shadow-sm">
+      <img src="{% static 'img/' %}{% if slug == 'polleras' %}pollera{% elif slug == 'fajas' %}faja{% else %}chaleco{% endif %}.svg" class="img-zoom absolute inset-0 w-full h-full object-cover" alt="">
+      <div class="absolute inset-0 bg-gradient-to-t from-wanka-900/80 to-transparent"></div>
+      <span class="absolute bottom-4 left-5 text-white font-serif text-2xl">Ver {{ nombre|lower }}</span>
+    </a>{% endfor %}
+  </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-4 mt-16">
+  <div class="flex items-end justify-between"><h2 class="font-serif text-3xl">Destacados</h2><a href="/catalogo/" class="text-wanka-600 font-semibold">Ver todo →</a></div>
+  {% if destacados %}<div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6">{% for p in destacados %}{% include "parciales/tarjeta_producto.html" %}{% endfor %}</div>
+  {% else %}<p class="mt-6 text-stone-500">Aún no hay productos. Ejecuta <code>manage.py sembrar_demo</code>.</p>{% endif %}
+</section>
+
+<section class="max-w-7xl mx-auto px-4 mt-16 grid md:grid-cols-3 gap-5 text-center">
+  <div class="bg-white rounded-2xl p-6 border border-stone-200"><p class="text-3xl">🧵</p><p class="font-serif text-lg mt-2">Hecho a mano</p><p class="text-sm text-stone-500">Bordadoras del valle del Mantaro.</p></div>
+  <div class="bg-white rounded-2xl p-6 border border-stone-200"><p class="text-3xl">📦</p><p class="font-serif text-lg mt-2">Envío a todo el Perú</p><p class="text-sm text-stone-500">O recojo gratis en tienda.</p></div>
+  <div class="bg-white rounded-2xl p-6 border border-stone-200"><p class="text-3xl">💳</p><p class="font-serif text-lg mt-2">Yape, Plin y transferencia</p><p class="text-sm text-stone-500">Validamos tu pago en breve.</p></div>
+</section>
+{% endblock %}

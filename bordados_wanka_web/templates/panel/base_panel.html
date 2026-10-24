@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load static %}
+{% block cuerpo %}
+<div class="min-h-screen flex">
+  <aside class="w-60 bg-stone-900 text-stone-300 hidden md:flex flex-col">
+    <a href="/panel/" class="flex items-center gap-2 px-5 h-16 border-b border-stone-800"><img src="{% static 'img/logo.svg' %}" class="w-7 h-7" alt=""><span class="font-serif text-white text-lg">Panel Wanka</span></a>
+    <nav class="p-3 space-y-1 text-sm font-semibold">
+      {% with r=request.path %}
+      <a href="/panel/" class="block px-3 py-2 rounded-lg {% if r == '/panel/' %}bg-wanka-600 text-white{% else %}hover:bg-stone-800{% endif %}">Resumen</a>
+      <a href="/panel/pagos/" class="block px-3 py-2 rounded-lg {% if '/pagos/' in r %}bg-wanka-600 text-white{% else %}hover:bg-stone-800{% endif %}">Pagos por validar</a>
+      <a href="/panel/pedidos/" class="block px-3 py-2 rounded-lg {% if '/pedidos/' in r %}bg-wanka-600 text-white{% else %}hover:bg-stone-800{% endif %}">Pedidos</a>
+      <a href="/panel/productos/" class="block px-3 py-2 rounded-lg {% if '/productos/' in r %}bg-wanka-600 text-white{% else %}hover:bg-stone-800{% endif %}">Productos y stock</a>
+      {% endwith %}
+      <a href="/" class="block px-3 py-2 rounded-lg hover:bg-stone-800 mt-6">← Ver tienda</a>
+    </nav>
+    <form method="post" action="/salir/" class="mt-auto p-4">{% csrf_token %}<button class="text-sm text-stone-400 hover:text-white">Cerrar sesión ({{ usuario_nombre }})</button></form>
+  </aside>
+  <div class="flex-1 min-w-0">
+    <header class="md:hidden bg-stone-900 text-white px-4 h-14 flex items-center gap-4 text-sm"><a href="/panel/" class="font-serif">Panel</a><a href="/panel/pagos/">Pagos</a><a href="/panel/pedidos/">Pedidos</a><a href="/panel/productos/">Productos</a></header>
+    {% include "parciales/mensajes.html" %}
+    <main class="p-4 md:p-8">{% block contenido %}{% endblock %}</main>
+  </div>
+</div>
+{% endblock %}

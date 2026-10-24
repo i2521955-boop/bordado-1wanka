@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block titulo %}Mis pedidos{% endblock %}
+{% block contenido %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+  <h1 class="font-serif text-4xl">Mis pedidos</h1>
+  <div class="mt-6 space-y-3">{% for p in pedidos %}
+    <a href="/mis-pedidos/{{ p.id_pedido }}/" class="flex flex-wrap items-center gap-4 bg-white rounded-xl border border-stone-200 p-4 hover:shadow">
+      <div class="flex-1"><p class="font-bold">{{ p.numero }}</p><p class="text-sm text-stone-500">{{ p.creado_lima|date:"d/m/Y H:i" }} · {{ p.tipo_entrega|capfirst }}</p></div>
+      {% include "parciales/estado.html" with grupo=p.estado_grupo nombre=p.estado_nombre %}
+      <p class="font-bold w-28 text-right">S/ {{ p.total|floatformat:2 }}</p>
+    </a>{% empty %}<p class="text-stone-500">Aún no tienes pedidos. <a href="/catalogo/" class="text-wanka-600 font-semibold">Ver productos</a></p>{% endfor %}</div>
+</div>
+{% endblock %}

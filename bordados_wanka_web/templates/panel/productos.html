@@ -1,0 +1,22 @@
+{% extends "panel/base_panel.html" %}{% block titulo %}Productos{% endblock %}
+{% block contenido %}
+<h1 class="font-serif text-3xl">Productos y stock</h1>
+<details class="mt-6 bg-white rounded-xl border border-stone-200 p-5"><summary class="cursor-pointer font-semibold text-wanka-700">+ Nuevo producto</summary>
+  <form method="post" action="/panel/productos/nuevo/" class="mt-4 grid md:grid-cols-3 gap-3 text-sm">{% csrf_token %}
+    <input name="nombre" required placeholder="Nombre" class="rounded-lg border border-stone-300 px-3 py-2">
+    <select name="id_categoria" class="rounded-lg border border-stone-300 px-3 py-2">{% for c in categorias %}<option value="{{ c.id_categoria }}">{{ c.nombre }}</option>{% endfor %}</select>
+    <input name="precio" required type="number" step="0.01" min="0.01" placeholder="Precio (S/ con IGV)" class="rounded-lg border border-stone-300 px-3 py-2">
+    <select name="tipo" class="rounded-lg border border-stone-300 px-3 py-2"><option value="stock">De stock</option><option value="a_pedido">A pedido</option></select>
+    <input name="tallas" placeholder="Tallas separadas por coma (S,M,L)" class="rounded-lg border border-stone-300 px-3 py-2">
+    <input name="color" placeholder="Color (opcional)" class="rounded-lg border border-stone-300 px-3 py-2">
+    <input name="stock" type="number" min="0" placeholder="Stock inicial por talla" class="rounded-lg border border-stone-300 px-3 py-2">
+    <textarea name="descripcion" placeholder="Descripción" class="md:col-span-2 rounded-lg border border-stone-300 px-3 py-2"></textarea>
+    <button class="md:col-span-3 justify-self-start px-6 py-2 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-semibold">Crear producto</button>
+  </form></details>
+<div class="mt-6 bg-white rounded-xl border border-stone-200 overflow-x-auto">
+  <table class="w-full text-sm"><thead class="bg-stone-50 text-left text-stone-500"><tr><th class="p-3">Producto</th><th class="p-3">SKU</th><th class="p-3">Talla</th><th class="p-3 text-right">Precio</th><th class="p-3 text-right">Stock</th><th class="p-3 text-right">Reservado</th><th class="p-3 text-right">Disponible</th><th class="p-3">Ajustar stock</th></tr></thead>
+  <tbody class="divide-y">{% for v in variantes %}<tr><td class="p-3"><a href="/producto/{{ v.slug }}/" class="font-semibold">{{ v.nombre }}</a><br><span class="text-xs text-stone-500">{{ v.categoria }}</span></td><td class="p-3">{{ v.sku }}</td><td class="p-3">{{ v.talla|default:"—" }} {{ v.color|default:"" }}</td><td class="p-3 text-right">S/ {{ v.precio|floatformat:2 }}</td><td class="p-3 text-right">{{ v.stock_actual }}</td><td class="p-3 text-right">{{ v.stock_reservado }}</td><td class="p-3 text-right font-bold">{{ v.stock_disponible }}</td>
+    <td class="p-3"><form hx-post="/panel/productos/stock/{{ v.id_variante }}/" class="flex gap-2"><input name="cantidad" type="number" required placeholder="+/-" class="w-20 rounded-lg border border-stone-300 px-2 py-1"><button class="px-3 py-1 rounded-lg bg-stone-800 text-white text-xs font-semibold">Aplicar</button></form></td></tr>
+  {% empty %}<tr><td colspan="8" class="p-6 text-center text-stone-500">Sin productos.</td></tr>{% endfor %}</tbody></table>
+</div>
+{% endblock %}

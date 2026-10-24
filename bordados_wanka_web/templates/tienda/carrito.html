@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block titulo %}Carrito{% endblock %}
+{% block contenido %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+  <h1 class="font-serif text-4xl">Tu carrito</h1>
+  {% if items %}
+  <div class="mt-6 grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-3">{% for i in items %}
+      <div class="flex gap-4 items-center bg-white rounded-xl border border-stone-200 p-3">
+        <img src="{{ i.imagen|default:'/static/img/artesania.svg' }}" class="w-20 h-20 rounded-lg object-cover" alt="">
+        <div class="flex-1"><a href="/producto/{{ i.slug }}/" class="font-serif text-lg">{{ i.nombre }}</a><p class="text-sm text-stone-500">{{ i.talla|default:"Única" }}{% if i.color %} · {{ i.color }}{% endif %} · {{ i.cantidad }} × S/ {{ i.precio|floatformat:2 }}</p></div>
+        <p class="font-bold">S/ {{ i.subtotal|floatformat:2 }}</p>
+        <form method="post" action="/carrito/quitar/{{ i.id_variante }}/">{% csrf_token %}<button class="text-stone-400 hover:text-red-600 text-sm px-2">Quitar</button></form>
+      </div>{% endfor %}</div>
+    <aside class="bg-white rounded-xl border border-stone-200 p-5 h-fit">
+      <div class="flex justify-between text-lg"><span>Subtotal</span><b>S/ {{ total|floatformat:2 }}</b></div>
+      <p class="text-xs text-stone-500 mt-1">El envío se calcula según la zona en el siguiente paso.</p>
+      <a href="/comprar/" class="mt-5 block text-center py-3 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-bold">Continuar compra</a>
+    </aside>
+  </div>
+  {% else %}<p class="mt-6 text-stone-500">Tu carrito está vacío. <a href="/catalogo/" class="text-wanka-600 font-semibold">Ver productos</a></p>{% endif %}
+</div>
+{% endblock %}

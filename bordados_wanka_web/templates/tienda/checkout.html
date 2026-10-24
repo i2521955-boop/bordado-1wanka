@@ -1,0 +1,47 @@
+{% extends "base.html" %}{% block titulo %}Finalizar compra{% endblock %}
+{% block contenido %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+  <h1 class="font-serif text-4xl">Finalizar compra</h1>
+  <form method="post" class="mt-6 grid lg:grid-cols-3 gap-6">{% csrf_token %}
+    <div class="lg:col-span-2 space-y-6">
+      <section class="bg-white rounded-xl border border-stone-200 p-5">
+        <h2 class="font-serif text-xl">1. Entrega</h2>
+        <div class="mt-4 grid sm:grid-cols-2 gap-3">
+          <label class="cursor-pointer"><input type="radio" name="tipo_entrega" value="recojo" checked class="peer sr-only" onchange="document.getElementById('dom').classList.add('hidden')">
+            <span class="block rounded-lg border border-stone-300 p-4 peer-checked:border-wanka-600 peer-checked:bg-wanka-50"><b>Recojo en tienda</b><br><span class="text-sm text-stone-500">Gratis · Huancayo</span></span></label>
+          <label class="cursor-pointer"><input type="radio" name="tipo_entrega" value="domicilio" class="peer sr-only" onchange="document.getElementById('dom').classList.remove('hidden')">
+            <span class="block rounded-lg border border-stone-300 p-4 peer-checked:border-wanka-600 peer-checked:bg-wanka-50"><b>Envío a domicilio</b><br><span class="text-sm text-stone-500">Costo según la zona</span></span></label>
+        </div>
+        <div id="dom" class="hidden mt-4 space-y-3">
+          {% for d in direcciones %}<label class="flex gap-3 items-start rounded-lg border border-stone-200 p-3"><input type="radio" name="id_direccion" value="{{ d.id_direccion }}" {% if forloop.first %}checked{% endif %} class="mt-1">
+            <span><b>{{ d.alias }}</b> — {{ d.direccion }}, {{ d.distrito }}<br><span class="text-sm text-stone-500">{{ d.zona }} · envío S/ {{ d.costo|floatformat:2 }}</span></span></label>{% endfor %}
+          <label class="flex gap-3 items-center"><input type="radio" name="id_direccion" value="nueva" {% if not direcciones %}checked{% endif %}> <b>Nueva dirección</b></label>
+          <div class="grid sm:grid-cols-2 gap-3 text-sm">
+            <input name="receptor" placeholder="Quién recibe" class="rounded-lg border border-stone-300 px-3 py-2">
+            <input name="telefono" placeholder="Celular (9 dígitos)" class="rounded-lg border border-stone-300 px-3 py-2">
+            <input name="direccion" placeholder="Dirección" class="sm:col-span-2 rounded-lg border border-stone-300 px-3 py-2">
+            <input name="referencia" placeholder="Referencia (opcional)" class="sm:col-span-2 rounded-lg border border-stone-300 px-3 py-2">
+            <input name="distrito" placeholder="Distrito" class="rounded-lg border border-stone-300 px-3 py-2">
+            <select name="id_zona" class="rounded-lg border border-stone-300 px-3 py-2">{% for z in zonas %}<option value="{{ z.id_zona }}">{{ z.nombre }} — S/ {{ z.costo|floatformat:2 }}</option>{% endfor %}</select>
+          </div>
+        </div>
+      </section>
+      <section class="bg-white rounded-xl border border-stone-200 p-5">
+        <h2 class="font-serif text-xl">2. Comprobante (boleta)</h2>
+        <div class="mt-3 grid sm:grid-cols-2 gap-3 text-sm">
+          <input name="dni" placeholder="DNI (obligatorio si supera S/ 700)" maxlength="8" class="rounded-lg border border-stone-300 px-3 py-2">
+          <input name="nombre_doc" placeholder="Nombre para la boleta (opcional)" class="rounded-lg border border-stone-300 px-3 py-2">
+          <textarea name="notas" placeholder="Notas para la tienda (opcional)" class="sm:col-span-2 rounded-lg border border-stone-300 px-3 py-2"></textarea>
+        </div>
+      </section>
+    </div>
+    <aside class="bg-white rounded-xl border border-stone-200 p-5 h-fit">
+      <h2 class="font-serif text-xl">Resumen</h2>
+      <ul class="mt-3 space-y-2 text-sm">{% for i in items %}<li class="flex justify-between"><span>{{ i.cantidad }} × {{ i.nombre }}</span><span>S/ {{ i.subtotal|floatformat:2 }}</span></li>{% endfor %}</ul>
+      <div class="mt-4 pt-4 border-t flex justify-between text-lg"><span>Productos</span><b>S/ {{ total|floatformat:2 }}</b></div>
+      <p class="text-xs text-stone-500">+ envío si eliges domicilio. El precio final lo calcula la tienda.</p>
+      <button class="mt-5 w-full py-3 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-bold">Confirmar pedido</button>
+    </aside>
+  </form>
+</div>
+{% endblock %}

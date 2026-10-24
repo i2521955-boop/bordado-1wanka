@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block titulo %}Verifica tu correo{% endblock %}
+{% block contenido %}{% include "tienda/_form_auth.html" %}
+    <h1 class="font-serif text-3xl text-center mt-6">Verifica tu correo</h1>
+    <p class="text-center text-stone-500 mt-1">Te enviamos un código de 6 dígitos (vence en 5 minutos).</p>
+    <form method="post" class="mt-6 space-y-4">{% csrf_token %}
+      <label class="block"><span class="text-sm font-semibold">Correo</span><input type="email" name="correo" value="{{ correo }}" required class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2.5"></label>
+      <label class="block"><span class="text-sm font-semibold">Código</span><input name="codigo" inputmode="numeric" maxlength="8" autocomplete="one-time-code" class="mt-1 w-full rounded-lg border border-stone-300 px-3 py-3 text-center text-2xl tracking-[.5em]"></label>
+      <button class="w-full py-3 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-semibold">Verificar</button>
+      <button name="accion" value="reenviar" formnovalidate class="w-full py-2 text-sm text-wanka-600 font-semibold">Enviar un código nuevo</button>
+    </form>
+  </div></div>
+{% endblock %}

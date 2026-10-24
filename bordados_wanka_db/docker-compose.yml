@@ -1,0 +1,46 @@
+# Entorno local de desarrollo: MySQL 8.4 LTS + phpMyAdmin
+#   docker compose up -d
+#   phpMyAdmin: http://localhost:8080   (usuario root, clave en .env)
+#   MySQL:      127.0.0.1:3306
+# La clave de root se lee de .env (no se sube al repositorio; ver .env.ejemplo).
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: wanka-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Define MYSQL_ROOT_PASSWORD en .env}
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+      - --event-scheduler=ON
+      - --sql-mode=STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,ONLY_FULL_GROUP_BY,NO_ENGINE_SUBSTITUTION
+      - --max-allowed-packet=64M
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - wanka_datos:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: wanka-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 16M
+    ports:
+      - "127.0.0.1:8080:80"
+
+volumes:
+  wanka_datos:

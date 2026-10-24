@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<section class="bg-wanka-50 border-b border-wanka-100"><div class="max-w-7xl mx-auto px-4 py-10">
+  <h1 class="font-serif text-4xl text-wanka-700">{{ titulo }}</h1>
+  <div class="mt-5 flex flex-wrap gap-2 text-sm">
+    <a href="/catalogo/" class="px-4 py-2 rounded-full border {% if not categoria %}bg-wanka-600 text-white border-wanka-600{% else %}bg-white border-stone-300{% endif %}">Todo</a>
+    {% for slug, nombre in categorias %}<a href="/catalogo/{{ slug }}/" class="px-4 py-2 rounded-full border {% if categoria == slug %}bg-wanka-600 text-white border-wanka-600{% else %}bg-white border-stone-300{% endif %}">{{ nombre }}</a>{% endfor %}
+    <form class="ml-auto"><input name="q" value="{{ q }}" placeholder="Buscar…" class="rounded-full border border-stone-300 px-4 py-2"></form>
+  </div>
+</div></section>
+<div class="max-w-7xl mx-auto px-4 mt-8">
+  {% if productos %}<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">{% for p in productos %}{% include "parciales/tarjeta_producto.html" %}{% endfor %}</div>
+  {% else %}<p class="text-stone-500 py-16 text-center">No encontramos productos.</p>{% endif %}
+</div>
+{% endblock %}

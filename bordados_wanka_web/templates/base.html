@@ -1,0 +1,61 @@
+{% load static %}<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Bordados Wanka{% endblock %} · Bordados Wanka</title>
+<link rel="icon" href="{% static 'img/logo.svg' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: { wanka: { 50:'#fdf3ee', 100:'#fbe3d8', 500:'#c8441f', 600:'#b5341a', 700:'#8e2a13', 900:'#4a160a' }, oro:'#f2a900', andino:'#2f6f5e' },
+  fontFamily: { serif: ['"Playfair Display"', 'Georgia', 'serif'], sans: ['Nunito', 'system-ui', 'sans-serif'] } } } };
+</script>
+<script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js" defer></script>
+<style>.img-zoom{transition:transform .4s ease}.tarjeta:hover .img-zoom{transform:scale(1.06)}[x-cloak]{display:none}</style>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+{% block cuerpo %}
+<header class="bg-white/95 backdrop-blur border-b border-stone-200 sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-6">
+    <a href="/" class="flex items-center gap-2 shrink-0">
+      <img src="{% static 'img/logo.svg' %}" class="w-8 h-8" alt="">
+      <span class="leading-none"><span class="block font-serif text-xl font-semibold text-wanka-600 tracking-wide">BORDADOS</span><span class="block text-xs tracking-[.3em] text-stone-600">WANKA</span></span>
+    </a>
+    <nav class="hidden md:flex items-center gap-5 text-sm font-semibold text-stone-600">
+      <a href="/catalogo/polleras/" class="hover:text-wanka-600">Polleras</a>
+      <a href="/catalogo/fajas/" class="hover:text-wanka-600">Fajas</a>
+      <a href="/catalogo/chalecos/" class="hover:text-wanka-600">Chalecos</a>
+      <a href="/catalogo/" class="hover:text-wanka-600">Todo</a>
+    </nav>
+    <form action="/catalogo/" class="hidden lg:block flex-1 max-w-sm"><input name="q" placeholder="Buscar bordados…" class="w-full rounded-full border border-stone-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-wanka-500"></form>
+    <div class="ml-auto flex items-center gap-3 text-sm">
+      {% if es_admin %}<a href="/panel/" class="px-3 py-2 rounded-lg bg-stone-900 text-white font-semibold">Panel</a>{% endif %}
+      {% if autenticado %}
+        {% if not es_admin %}<a href="/mis-pedidos/" class="font-semibold text-stone-600 hover:text-wanka-600">Mis pedidos</a>{% endif %}
+        <span class="hidden sm:inline text-stone-500">Hola, {{ usuario_nombre }}</span>
+        <form method="post" action="/salir/">{% csrf_token %}<button class="text-stone-500 hover:text-wanka-600">Salir</button></form>
+      {% else %}
+        <a href="/ingresar/" class="font-semibold text-stone-700 hover:text-wanka-600">Ingresar</a>
+        <a href="/registro/" class="px-4 py-2 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-semibold">Crear cuenta</a>
+      {% endif %}
+      <a href="/carrito/" class="relative p-2 rounded-full hover:bg-wanka-50" aria-label="Carrito">
+        <svg class="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>
+        <span id="carrito-n" class="absolute -top-0.5 -right-0.5 min-w-5 h-5 px-1 rounded-full bg-wanka-600 text-white text-xs grid place-items-center {% if not carrito_n %}hidden{% endif %}">{{ carrito_n }}</span>
+      </a>
+    </div>
+  </div>
+</header>
+{% include "parciales/mensajes.html" %}
+<main class="flex-1">{% block contenido %}{% endblock %}</main>
+<footer class="bg-wanka-900 text-wanka-100 mt-16">
+  <div class="max-w-7xl mx-auto px-4 py-10 grid gap-8 md:grid-cols-3 text-sm">
+    <div><p class="font-serif text-xl text-white mb-2">Bordados Wanka</p><p class="opacity-80">Polleras, fajas y chalecos bordados a mano en el valle del Mantaro, Huancayo.</p></div>
+    <div><p class="font-semibold text-white mb-2">Tienda</p><ul class="space-y-1 opacity-80"><li><a href="/catalogo/polleras/">Polleras</a></li><li><a href="/catalogo/fajas/">Fajas</a></li><li><a href="/catalogo/chalecos/">Chalecos</a></li></ul></div>
+    <div><p class="font-semibold text-white mb-2">Atención</p><p class="opacity-80">Pagos con Yape, Plin o transferencia. Recojo en tienda o envío a todo el Perú.</p><p class="mt-2 opacity-60">Libro de Reclamaciones disponible.</p></div>
+  </div>
+</footer>
+{% endblock %}
+</body>
+</html>

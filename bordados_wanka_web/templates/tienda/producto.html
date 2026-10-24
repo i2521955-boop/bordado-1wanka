@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block titulo %}{{ p.nombre }}{% endblock %}
+{% block contenido %}
+<div class="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-2 gap-10">
+  <div class="tarjeta rounded-3xl overflow-hidden border border-stone-200 bg-white"><img src="{{ p.imagen_principal|default:'/static/img/artesania.svg' }}" class="img-zoom w-full aspect-square object-cover" alt="{{ p.nombre }}"></div>
+  <div>
+    <a href="/catalogo/{{ p.categoria_slug }}/" class="text-sm uppercase tracking-wider text-andino font-bold">{{ p.categoria }}</a>
+    <h1 class="font-serif text-4xl mt-2">{{ p.nombre }}</h1>
+    <p class="text-3xl text-wanka-600 font-bold mt-4">S/ {{ p.precio_desde|floatformat:2 }}</p>
+    {% if p.descripcion %}<p class="mt-4 text-stone-600 leading-relaxed">{{ p.descripcion }}</p>{% endif %}
+    {% if p.tipo_fabricacion != 'stock' %}<p class="mt-4 text-sm bg-oro/15 text-amber-900 rounded-lg px-4 py-3">Se fabrica a pedido{% if p.dias_produccion %} (unos {{ p.dias_produccion }} días){% endif %}.</p>{% endif %}
+    {% if volumen %}<div class="mt-5 rounded-xl border border-andino/30 bg-emerald-50/50 p-4 text-sm"><p class="font-bold text-andino">Precio por mayor</p>
+      {% for v in volumen %}<p>Desde {{ v.cantidad_minima }} unidades: <b>S/ {{ v.precio_unitario|floatformat:2 }}</b> c/u</p>{% endfor %}</div>{% endif %}
+    <form class="mt-6 space-y-4" hx-post="/carrito/agregar/" hx-target="#aviso" hx-swap="innerHTML">
+      {% csrf_token %}
+      <div><p class="text-sm font-semibold mb-2">Talla / color</p>
+        <div class="flex flex-wrap gap-2">{% for v in variantes %}
+          <label class="cursor-pointer"><input type="radio" name="id_variante" value="{{ v.id_variante }}" class="peer sr-only" {% if forloop.first %}checked{% endif %} {% if not v.disponible and p.tipo_fabricacion == 'stock' %}disabled{% endif %}>
+          <span class="block px-4 py-2 rounded-lg border border-stone-300 peer-checked:border-wanka-600 peer-checked:bg-wanka-50 peer-checked:text-wanka-700 peer-disabled:opacity-40 text-sm">{{ v.talla|default:"Única" }}{% if v.color %} · {{ v.color }}{% endif %}{% if p.tipo_fabricacion == 'stock' %} <span class="text-stone-400">({{ v.stock_disponible }})</span>{% endif %}</span></label>
+        {% empty %}<p class="text-stone-500 text-sm">Sin variantes disponibles.</p>{% endfor %}</div></div>
+      <div class="flex items-center gap-3"><label class="text-sm font-semibold">Cantidad</label><input type="number" name="cantidad" value="1" min="1" max="999" class="w-24 rounded-lg border border-stone-300 px-3 py-2"></div>
+      <button class="w-full md:w-auto px-8 py-3 rounded-lg bg-wanka-600 hover:bg-wanka-700 text-white font-bold">Agregar al carrito</button>
+      <div id="aviso"></div>
+    </form>
+  </div>
+</div>
+{% endblock %}
